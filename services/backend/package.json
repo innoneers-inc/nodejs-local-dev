@@ -1,0 +1,24 @@
+{
+  "name": "@nodejs-local-dev/backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "author": "Vasyl Kovalchuk <vasyl.kovalchuk@innoneers.com>",
+  "scripts": {
+    "start": "node src/app.js",
+    "start:local": "cross-env-shell NODE_ENV=development PORT=8080 nodemon -r ./src/app.js",
+    "deploy:gae": "sh -c 'gcloud app deploy app.yaml --project innoneers-d-blogs-${0} --quiet'",
+    "deploy": "sh -c 'yarn deploy:gae ${0}'"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^7.0.0",
+    "boom": "^7.3.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}

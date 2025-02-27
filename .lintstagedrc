@@ -1,0 +1,8 @@
+{
+    "*.js": [
+      "yarn check-quality"
+    ],
+    "*.{js,json,css,md}": [
+      "yarn check-formatting"
+    ]
+  }

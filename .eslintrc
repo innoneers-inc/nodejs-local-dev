@@ -1,0 +1,20 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true
+  },
+  "extends": ["standard", "prettier", "plugin:jest/recommended"],
+  "plugins": ["jest"],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "rules": {
+    "no-console": "error",
+    "camelcase": "off",
+    "require-await": 1,
+    "object-shorthand": "error",
+    "no-extend-native": "off",
+    "no-prototype-builtins": 0
+  }
+}

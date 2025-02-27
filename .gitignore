@@ -1,0 +1,15 @@
+.vscode
+.idea
+assets/secrets
+
+dump.rdb
+app.yaml
+node_modules
+*.log
+.env
+serviceAccount.json
+package-lock.json
+.sentryclirc
+.npmrc
+coverage
+/services/frontend/build/
