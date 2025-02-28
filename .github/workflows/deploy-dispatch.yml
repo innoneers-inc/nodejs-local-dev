@@ -1,4 +1,4 @@
-name: Deploy to GAE
+name: Deploy dispatch rules to GAE
 
 on:
   push:
