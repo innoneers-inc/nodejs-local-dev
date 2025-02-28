@@ -1,1 +1,1 @@
-module.exports = require("./loadEnv")
+module.exports = require("./loadEnv");

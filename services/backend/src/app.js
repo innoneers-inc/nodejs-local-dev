@@ -1,5 +1,6 @@
 const path = require("node:path");
 
+// should be called before any other module to ensure env variables are set
 require("./config")(path.resolve(__dirname, "../app.yaml"));
 
 const { isBoom, boomify } = require("boom");
@@ -10,7 +11,6 @@ const cookieParser = require("cookie-parser");
 const { ImagesRouter, AuthRouter } = require("./routes");
 
 const app = express();
-
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
@@ -23,7 +23,7 @@ const ApisRouter = express.Router();
 ApisRouter.use("/auth", AuthRouter);
 ApisRouter.use("/images", ImagesRouter);
 
-app.use("/apis", ApisRouter)
+app.use("/apis", ApisRouter);
 
 app.use([
   function boomifyErrorHandler(err, req, res, next) {

@@ -1,4 +1,3 @@
-const { format } = require("util");
 const { badRequest } = require("boom");
 const express = require("express");
 
