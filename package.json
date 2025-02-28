@@ -11,6 +11,7 @@
 
     "check-quality": "eslint",
     "check-formatting": "prettier -l",
+
     "fix-formatting": "prettier --write \"**/*.{js,json,md}\"",
 
     "install:apis": "cd services/backend && yarn install",
@@ -49,5 +50,9 @@
     "lint-staged": "^14.0.1",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,json,css,md}": "yarn check-formatting",
+    "*.{js,jsx}": "yarn check-quality"
   }
 }

@@ -1,7 +1,6 @@
 {
   "name": "@nodejs-local-dev/backend",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
   "private": true,
   "author": "Vasyl Kovalchuk <vasyl.kovalchuk@innoneers.com>",
