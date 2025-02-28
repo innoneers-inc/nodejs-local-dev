@@ -9,8 +9,11 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        type: environment
-        required: true
+        type: choice
+        description: ENV variable
+        options:
+          - d1
+          - q1
 jobs:
   deploy:
     uses: ./.github/workflows/reusable-jobs.yml
