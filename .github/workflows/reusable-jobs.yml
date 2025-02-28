@@ -2,6 +2,9 @@ name: Reusable common job for deploying to GAE
 
 on:
   workflow_call:
+    secrets:
+      GCP_SERVICE_ACCOUNT:
+        description: "GCP ci/cd service account"
     inputs:
       environment:
         type: string
