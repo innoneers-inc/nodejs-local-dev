@@ -1,0 +1,81 @@
+name: Deploy to GAE
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: Set branch-based environment variables on PR merged
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: iamtheyammer/branch-env-vars@v1.2.2
+        with:
+          bevOverwrite: true
+          ENV: |
+            !pr>main:d1
+            !default:d1
+
+      - name: Check ENV
+        id: set-env
+        run: echo "::set-output name=ENV::$ENV"
+          echo "Environment variable for environment - $environment"
+
+      - name: "Set up Google Cloud Auth"
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT }}"
+        env:
+          GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v2"
+        with:
+          version: ">= 363.0.0"
+
+      - name: Install root dependencies
+        run: yarn install
+
+      - name: Fetch secrets
+        run: yarn secrets:fetch $ENV
+
+  deploy-backend:
+    if: github.event.head_commit.message != 'skip backend' && contains(github.event.commits.*.modified, 'services/backend/**')
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+      - name: Install backend dependencies
+        run: yarn install:backend
+
+      - name: Setup backend
+        run: yarn setup:backend ${{ needs.deploy.outputs.ENV }}
+
+      - name: Deploy backend to GAE
+        run: yarn deploy:backend ${{ needs.deploy.outputs.ENV }}
+
+  deploy-frontend:
+    if: github.event.head_commit.message != 'skip frontend' && contains(github.event.commits.*.modified, 'services/frontend/**')
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+      - name: Install frontend dependencies
+        run: yarn install:frontend
+
+      - name: Setup frontend
+        run: yarn setup:frontend ${{ needs.deploy.outputs.ENV }}
+
+      - name: Deploy frontend to GAE
+        run: yarn deploy:frontend ${{ needs.deploy.outputs.ENV }}
