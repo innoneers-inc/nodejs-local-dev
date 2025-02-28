@@ -15,7 +15,7 @@ on:
 
 jobs:
   deploy:
-    uses: ./.github/workflows/reusable-deploy.yaml
+    uses: ./.github/workflows/reusable-jobs.yml
     with:
       environment: ${{ github.event.inputs.environment }}
 
