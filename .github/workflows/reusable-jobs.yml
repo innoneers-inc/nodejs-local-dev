@@ -41,12 +41,16 @@ jobs:
         run: echo "::set-output name=ENV::$ENV"
           echo "Environment variable for environment - $environment"
 
+      - name: "Debug GCP credentials"
+        env:
+          GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+        run: |
+          echo "$GCP_SERVICE_ACCOUNT" > credentials.json
+
       - name: "Set up Google Cloud Auth"
         uses: "google-github-actions/auth@v2"
         with:
           credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT }}"
-        env:
-          GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: "Set up Cloud SDK"
         uses: "google-github-actions/setup-gcloud@v2"
