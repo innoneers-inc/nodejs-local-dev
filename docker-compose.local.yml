@@ -1,0 +1,77 @@
+services:
+  mongodb:
+    restart: on-failure
+    container_name: custom-mongodb
+    hostname: mongodb
+    image: mongo:latest
+    ports:
+      - '${EXT_DB_PORT}:27017'
+    networks:
+      - external
+    volumes:
+      - db:/data/db
+    command: mongod --replSet rs0 --setParameter "transactionLifetimeLimitSeconds=14400"
+
+  redis:
+    restart: on-failure
+    image: redis:latest
+    container_name: custom-redis
+    ports:
+      - '${EXT_REDIS_PORT}:6379'
+    networks:
+      - external
+    volumes:
+      - ./config/redis.conf:/redis.conf
+    command: ['redis-server', '/redis.conf']
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: kafka-server
+    ports:
+      - '${EXT_KAFKA_PORT}:9092'
+      - '9094:9094'
+    networks:
+      - external
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_ENABLE_KRAFT=yes
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:${EXT_KAFKA_PORT},CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:${EXT_KAFKA_PORT},EXTERNAL://kafka:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_MESSAGE_MAX_BYTES=10000
+    volumes:
+      - 'kafka_data:/bitnami'
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    networks:
+      - external
+    ports:
+      - '8092:8080'
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS=kafka:9094
+      - KAFKA_CLUSTERS_0_NAME=${PROJECT_NAME}
+  # used for creation default replicaSet for mongo container to allow transaction
+  mongo-initiate:
+    container_name: custom-mongo-initiate
+    image: mongo:latest
+    networks:
+      - external
+    depends_on:
+      - mongodb
+    command: sh -c 'sleep 4 && mongosh --host mongodb --eval "rs.initiate()"'
+
+volumes:
+  db:
+  kafka_data:
+    driver: local
+
+networks:
+  external:

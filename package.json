@@ -20,6 +20,7 @@
     "setup:service": "sh -c 'cp -r assets/secrets/${0}/${1}/. services/${1}/'",
     "start:frontend": "cd services/frontend && yarn start:local",
     "start:backend": "cd services/backend && yarn start:local",
+    "setup:custom": "node scripts/setup-custom-env.script.js",
     "deploy:backend": "sh -c 'cd services/backend && yarn deploy ${0}'",
     "deploy:frontend": "sh -c 'cd services/frontend && yarn deploy ${0}'",
     "deploy:dispatch": "sh -c 'gcloud app deploy dispatch.yaml --project innoneers-d-blogs-${0} --quiet'",
